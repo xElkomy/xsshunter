@@ -27,7 +27,7 @@ COPY docker-entrypoint.sh /app/
 RUN chmod +x /app/docker-entrypoint.sh
 COPY templates /app/templates
 
-USER node
+USER root
 
 # Start the server
 ENTRYPOINT ["/app/docker-entrypoint.sh"]

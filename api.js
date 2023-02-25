@@ -192,6 +192,9 @@ async function set_up_api_server(app) {
           const oauth2 = google.oauth2({version: 'v2', auth: client});
           const googleUserProfile = await oauth2.userinfo.v2.me.get();
           const email = googleUserProfile.data.email
+          if(email !== process.env.GMAIL_ACCOUNT) {
+            throw "Gmail account not allowed to login";
+          }
           const [user, created] = await Users.findOrCreate({ where: { 'email': email } });
           if(created){
             user.path = makeRandomPath(10);
@@ -218,7 +221,7 @@ async function set_up_api_server(app) {
             return res.sendStatus(404);
         }
 
-        const gz_image_path = `${screenshot_filename}.gz`;
+        var gz_image_path = `${screenshot_filename}.gz`;
 
         if (process.env.USE_CLOUD_STORAGE == "true"){
             const storage = new Storage();
@@ -246,6 +249,7 @@ async function set_up_api_server(app) {
                 res.status(404).send(`Error retrieving image from GCS`);
             }
         }else{
+            gz_image_path = `${SCREENSHOTS_DIR}/${gz_image_path}`;
             const image_exists = await check_file_exists(gz_image_path);
 
             if(!image_exists) {
@@ -415,11 +419,11 @@ async function set_up_api_server(app) {
             }));
         }else{
             await Promise.all(screenshot_id_records.map(payload => {
-                let filename = "${SCREENSHOTS_DIR}/"
+                let filename = `${SCREENSHOTS_DIR}/`
                 if(payload.encrypted){
-                    filename = `${payload.screenshot_id}.b64png.enc.gz`
+                    filename += `${payload.screenshot_id}.b64png.enc.gz`
                 }else{
-                    fileName = `${payload.screenshot_id}.png.gz`;
+                    filename += `${payload.screenshot_id}.png.gz`;
                 }
                 return asyncfs.unlink(filename);
             }));
