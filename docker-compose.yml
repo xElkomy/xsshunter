@@ -1,36 +1,10 @@
-version: "3.9"
 services:
-  caddy:
-    image: caddy:alpine
-    container_name: caddy
-    env_file:
-      - dev.env
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ./caddy/data:/data
-      - ./caddy/config:/config
-      - ./Caddyfile:/etc/caddy/Caddyfile
-  # XSS Hunter Express service
-  xsshunterexpress:
-    build: .
-    env_file:
-      - dev.env
-    ports:
-      - "127.0.0.1:8080:8080"
-    volumes:
-      # Directory where payload fire images are stored.
-      - ./payload-fire-images:/app/payload-fire-images
-      - ~/.config/gcloud/application_default_credentials.json:/gcloud.json
-    depends_on:
-      postgresdb:
-        condition: service_healthy
-  postgresdb:
+  xsshunterexpress-db:
     image: postgres
-    restart: always
+    container_name: xsshunterexpress-db
+    restart: unless-stopped
     env_file:
-      - dev.env
+      - .env
     environment:
       PGDATA: /var/lib/postgresql/data/pgdata
       POSTGRES_HOST_AUTH_METHOD: trust
@@ -41,3 +15,30 @@ services:
       retries: 5
     volumes:
       - ./postgres-db-data:/var/lib/postgresql/data/pgdata
+  xsshunterexpress-service:
+    build: .
+    container_name: xsshunterexpress-service
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - ./payload-fire-images:/app/payload-fire-images
+      - ~/.config/gcloud/application_default_credentials.json:/gcloud.json
+    depends_on:
+      xsshunterexpress-db:
+        condition: service_healthy
+  xsshunterexpress-proxy:
+    image: caddy:alpine
+    container_name: xsshunterexpress-proxy
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - ./caddy/data:/data
+      - ./caddy/config:/config
+      - ./Caddyfile:/etc/caddy/Caddyfile

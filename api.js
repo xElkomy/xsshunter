@@ -192,8 +192,8 @@ async function set_up_api_server(app) {
           const oauth2 = google.oauth2({version: 'v2', auth: client});
           const googleUserProfile = await oauth2.userinfo.v2.me.get();
           const email = googleUserProfile.data.email
-          if(email !== process.env.GMAIL_ACCOUNT) {
-            throw "Gmail account not allowed to login";
+          if(!process.env.GMAIL_ACCOUNTS.toLowerCase().includes(email.toLowerCase())) {
+            throw "This Gmail account is not allowed to register.";
           }
           const [user, created] = await Users.findOrCreate({ where: { 'email': email } });
           if(created){
