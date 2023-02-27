@@ -11,4 +11,5 @@ ssldata/*
 config.env
 payload-fire-images/*.gz
 payload-fire-images/*.png
+caddy/
 deploy.sh
