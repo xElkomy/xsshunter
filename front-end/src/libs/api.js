@@ -150,6 +150,36 @@ async function update_pgp_key(pgp_key) {
     );
 }
 
+async function update_discord_webhook(discord_webhook) {
+    return api_request(
+        'PUT',
+        `/api/v1/settings`,
+        {
+            "discord_webhook": discord_webhook,
+        }
+    );
+}
+
+async function update_slack_webhook(slack_webhook) {
+    return api_request(
+        'PUT',
+        `/api/v1/settings`,
+        {
+            "slack_webhook": slack_webhook,
+        }
+    );
+}
+
+async function update_custom_webhook(custom_webhook) {
+    return api_request(
+        'PUT',
+        `/api/v1/settings`,
+        {
+            "custom_webhook": custom_webhook,
+        }
+    );
+}
+
 async function set_chainload_uri(chainload_uri) {
     return api_request(
         'PUT',
@@ -198,6 +228,9 @@ module.exports = {
     authenticate,
     get_user_path,
     update_pgp_key,
+    update_custom_webhook,
+    update_discord_webhook,
+    update_slack_webhook,
     update_user_path,
     get_payload_fires,
     delete_payload_fires,

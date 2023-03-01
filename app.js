@@ -353,6 +353,25 @@ async function get_app_server() {
             payload_fire_data.xsshunter_url = `https://${process.env.HOSTNAME}`;
 			await notification.send_email_notification(payload_fire_data, user.email);
 		}
+
+        if(user.discord_webhook) {
+			payload_fire_data.screenshot_url = `https://${process.env.HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
+            payload_fire_data.xsshunter_url = `https://${process.env.HOSTNAME}`;
+			await notification.send_discord_notification(payload_fire_data, user.discord_webhook);
+		}
+
+        if(user.slack_webhook) {
+			payload_fire_data.screenshot_url = `https://${process.env.HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
+            payload_fire_data.xsshunter_url = `https://${process.env.HOSTNAME}`;
+			await notification.send_slack_notification(payload_fire_data, user.slack_webhook);
+		}
+
+        if(user.custom_webhook) {
+			payload_fire_data.screenshot_url = `https://${process.env.HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
+            payload_fire_data.xsshunter_url = `https://${process.env.HOSTNAME}`;
+			await notification.send_custom_notification(payload_fire_data, user.custom_webhook);
+		}
+
 	});
 
 	
@@ -381,7 +400,7 @@ async function get_app_server() {
         res.set("Access-Control-Max-Age", "86400");
 
         if(req.get('host') != process.env.XSS_HOSTNAME) {
-            console.debug(req.get('host'));
+            //console.debug(req.get('host'));
             return res.redirect("/app/");
         }
 

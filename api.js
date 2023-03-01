@@ -172,6 +172,23 @@ async function set_up_api_server(app) {
 		return
     });
 
+    app.post(constants.API_BASE_PATH + 'userlogin', async (req, res) => {
+      if(process.env.PANEL_USERNAME === req.body.email && process.env.PANEL_PASSWORD === req.body.password) {
+        const [user, created] = await Users.findOrCreate({ where: { 'email': req.body.email } });
+        if(created){
+          user.path = makeRandomPath(10);
+            user.injectionCorrelationAPIKey = makeRandomPath(20);
+            user.save();
+            console.log(`Created new user ID: ${user.id}`)
+        }
+          req.session.email = user.email;
+          req.session.user_id = user.id;
+          req.session.authenticated = true;
+          res.send("Logged in!");
+        } else {
+          res.status(401).end();
+    }});
+
     app.get('/login', (req, res) => {
       const client = new OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.NODE_ENV == 'production' ? `https://${process.env.HOSTNAME}/oauth-login` : `http://${process.env.HOSTNAME}/oauth-login`);
       const authUrl = client.generateAuthUrl({
@@ -192,7 +209,7 @@ async function set_up_api_server(app) {
           const oauth2 = google.oauth2({version: 'v2', auth: client});
           const googleUserProfile = await oauth2.userinfo.v2.me.get();
           const email = googleUserProfile.data.email
-          if(!process.env.GMAIL_ACCOUNTS.toLowerCase().includes(email.toLowerCase())) {
+          if(process.env.GMAIL_ACCOUNTS && !process.env.GMAIL_ACCOUNTS.toLowerCase().includes(email.toLowerCase())) {
             throw "This Gmail account is not allowed to register.";
           }
           const [user, created] = await Users.findOrCreate({ where: { 'email': email } });
@@ -284,13 +301,27 @@ async function set_up_api_server(app) {
     app.use(favicon('./front-end/dist/favicon.ico'));
 
     /*
-		Endpoint which returns if the user is logged in or not.
+		Endpoint which returns if the user is logged in or not and it Google oauth login is enabled
     */
     app.get(constants.API_BASE_PATH + 'auth-check', async (req, res) => {
+        if(process.env.OAUTH_LOGIN && process.env.OAUTH_LOGIN.toLowerCase() === "true") {
+            oauth_login = true;
+        } else {
+            oauth_login = false;
+        }
+
+        if(process.env.PANEL_LOGIN && process.env.PANEL_LOGIN.toLowerCase() === "true") {
+            panel_login = true;
+        } else {
+            panel_login = false;
+        }
+
         res.status(200).json({
             "success": true,
             "result": {
-            	"is_authenticated": (req.session.authenticated == true)
+            	"is_authenticated": (req.session.authenticated == true),
+                "oauth_login" : (oauth_login == true),
+                "panel_login" : (panel_login == true)
             }
         }).end();
     });
@@ -673,6 +704,9 @@ async function set_up_api_server(app) {
         returnObj.chainload_uri = user.additionalJS;
         returnObj.pgp_key = user.pgp_key;
         returnObj.send_alert_emails = user.sendEmailAlerts;
+        returnObj.discord_webhook = user.discord_webhook;
+        returnObj.slack_webhook = user.slack_webhook;
+        returnObj.custom_webhook = user.custom_webhook;
        
         res.status(200).json({
             'success': true,
@@ -702,6 +736,22 @@ async function set_up_api_server(app) {
                 type: 'boolean',
                 required: false,
             },
+
+            discord_webhook: {
+                type: 'string',
+                required: false,
+            },
+
+            slack_webhook: {
+                type: 'string',
+                required: false,
+            },
+
+            custom_webhook: {
+                type: 'string',
+                required: false,
+            },
+
             revoke_all_sessions: {
                 type: 'boolean',
                 required: false,
@@ -750,6 +800,25 @@ async function set_up_api_server(app) {
         if(req.body.send_alert_emails !== undefined) {
             user.sendEmailAlerts = req.body.send_alert_emails;
         }
+
+        if(req.body.discord_webhook) {
+            user.discord_webhook = req.body.discord_webhook;
+        }else if (req.body.discord_webhook === ""){
+            user.discord_webhook = null;
+        }
+
+        if(req.body.slack_webhook) {
+            user.slack_webhook = req.body.slack_webhook;
+        }else if (req.body.slack_webhook === ""){
+            user.slack_webhook = null;
+        }
+
+        if(req.body.custom_webhook) {
+            user.custom_webhook = req.body.custom_webhook;
+        }else if (req.body.custom_webhook === ""){
+            user.custom_webhook = null;
+        }
+
         await user.save();
 
         res.status(200).json({

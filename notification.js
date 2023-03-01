@@ -1,4 +1,5 @@
 const sendgrid = require('@sendgrid/mail')
+const fetch = require('node-fetch');
 sendgrid.setApiKey(process.env.SENDGRID_API_KEY)
 const mustache = require('mustache');
 const fs = require('fs');
@@ -39,4 +40,62 @@ async function send_email_notification(xss_payload_fire_data, email) {
 	return true;
 }
 
-module.exports.send_email_notification = send_email_notification;
+async function send_discord_notification(xss_payload_fire_data, discord_webhook) {
+	const fire_location = (!xss_payload_fire_data.encrypted ? xss_payload_fire_data.url : 'With An Encryption Key');
+	fetch(
+		discord_webhook,
+		{
+		  method: 'post',
+		  headers: {
+			'Content-Type': 'application/json',
+		  },
+		  body: JSON.stringify({
+			username: 'XSS Hunter',
+			content: `XSS triggered on ${fire_location}`,
+		  }),
+		}
+	  );
+	  return true;
+}
+
+async function send_slack_notification(xss_payload_fire_data, slack_webhook) {
+	const fire_location = (!xss_payload_fire_data.encrypted ? xss_payload_fire_data.url : 'With An Encryption Key');
+	fetch(
+		slack_webhook,
+		{
+		  method: 'post',
+		  headers: {
+			'Content-Type': 'application/json',
+		  },
+		  body: JSON.stringify({
+			text: `XSS triggered on ${fire_location}`,
+		  }),
+		}
+	  );	
+	return true;
+}
+
+async function send_custom_notification(xss_payload_fire_data, custom_webhook) {
+	const fire_location = (!xss_payload_fire_data.encrypted ? xss_payload_fire_data.url : 'With An Encryption Key');
+	fetch(
+		custom_webhook,
+		{
+		  method: 'post',
+		  headers: {
+			'Content-Type': 'application/json',
+		  },
+		  body: JSON.stringify({
+			sender: 'XSS Hunter',
+			content: `XSS triggered on ${fire_location}`,
+		  }),
+		}
+	  );	
+	return true;
+}
+
+module.exports = {
+	send_email_notification,
+	send_discord_notification,
+	send_slack_notification,
+	send_custom_notification
+ }

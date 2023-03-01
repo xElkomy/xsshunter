@@ -61,7 +61,23 @@ Users.init({
         type: Sequelize.BOOLEAN,
         allownull: false,
         defaultValue: true,
-    }
+    },
+	discord_webhook: {
+        type: Sequelize.TEXT,
+        allownull: true,
+		unique: false
+    },
+	slack_webhook: {
+        type: Sequelize.TEXT,
+        allownull: true,
+		unique: false
+    },
+	custom_webhook: {
+        type: Sequelize.TEXT,
+        allownull: true,
+		unique: false
+    },
+
 
 
 }, {

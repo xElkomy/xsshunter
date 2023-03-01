@@ -4,10 +4,19 @@
         <router-view :key="$route.fullPath" v-if="!show_login_prompt"></router-view>
         <!-- Login modal if not authenticated -->
         <modal class="show d-block" body-classes="p-0" modal-classes="modal-dialog-centered modal-sm ]" v-if="show_login_prompt">
-            <card type="secondary" header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5" class="border-0 mb-0" style="text-align: center">
+            <card type="secondary" header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5" class="border-0 mb-0" style="text-align: center" v-if="show_login_prompt && show_oauth_prompt">
                 <h3 style="margin-bottom: 0; color: #2e5543;">XSS Hunter<br />
                     <i>Please login to continue.</i></h3>
                     <base-button simple type="primary" class="mt-3 ml-1 mr-1" v-on:click="googleLogin()">Google Login</base-button>
+            </card>
+            <card type="secondary" header-classes="bg-white pb-5" body-classes="px-lg-5 py-lg-5" class="border-0 mb-0" style="text-align: center" v-if="show_login_prompt && show_userpass_prompt">
+                <h3 style="margin-bottom: 0; color: #2e5543;">XSS Hunter<br />
+                    <i>Please login to continue.</i></h3>
+                        <form id="login_form" @submit.prevent="passlogin" v-if="show_login_prompt && show_userpass_prompt">
+                        <p><input id="user_email" v-model="user_email" type="text" name="user_email" placeholder="your email address"></p>
+                        <p><input id="user_password" v-model="user_password" type="password" name="user_password"></p>
+                        <p><button type="submit" class="mt-3 ml-1 mr-1">Login</button></p>
+                    </form>
             </card>
         </modal>
         <div class="loading-bar" v-if="loading">
@@ -31,20 +40,40 @@ export default {
         return {
             loading: false,
             is_authed: false,
+            oauth_login_enabled: false,
+            userpass_login_enabled: false,
             invalid_password_used: false,
+            user_email: null,
+            user_password: null,
             password: '',
         }
     },
     computed: {
         show_login_prompt() {
             return !this.is_authed;
+        },
+
+        show_oauth_prompt() {
+            return this.oauth_login_enabled;
+        },
+
+        show_userpass_prompt() {
+            return this.userpass_login_enabled;
         }
     },
     methods: {
+
+        passlogin(submitEvent) {
+            this.user_email = submitEvent.target.elements.user_email.value;
+            this.user_password = submitEvent.target.elements.user_password.value;
+            fetch('/api/v1/userlogin',{ method: 'post', headers: {'Content-Type': 'application/json','X-CSRF-Buster': 'true'}, body: JSON.stringify({email: this.user_email,password: this.user_password,}),}).then((response) => { if (response.status === 401) {alert("login failed");} window.location.href="/app"});
+        },
+
         async is_authenticated() {
             const auth_result = await api_request.is_authenticated();
-            return auth_result.result.is_authenticated;
+            return auth_result.result;
         },
+
         async attempt_login() {
             const login_result = await api_request.authenticate(
                 this.password
@@ -77,9 +106,10 @@ export default {
         window.app = this;
         this.$watch('$route', this.disableRTL, { immediate: true });
         this.$watch('$sidebar.showSidebar', this.toggleNavOpen);
-
-        this.is_authed = await this.is_authenticated();
-
+        const auth_values = await this.is_authenticated();
+        this.is_authed = auth_values.is_authenticated;
+        this.oauth_login_enabled = auth_values.oauth_login;
+        this.userpass_login_enabled = auth_values.panel_login;
         this.loading = false;
     }
 

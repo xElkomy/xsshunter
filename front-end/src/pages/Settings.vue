@@ -41,6 +41,39 @@
                             </base-button>
                         </card>
                         <card>
+                            <h4 class="card-title">Discord Webhook</h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Discord webhook</h6>
+                            <p class="card-text">
+                                <base-input v-model:value="discord_webhook" type="text" placeholder="..."></base-input>
+                            </p>
+                            <base-button type="primary" v-on:click="update_discord_webhook">
+                                <span style="display: inline-block; margin-right: 6px;"><i class="fas fa-lock"></i></span>
+                                Update Discord webhook
+                            </base-button>
+                        </card>
+                        <card>
+                            <h4 class="card-title">Slack Webhook</h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Slack webhook</h6>
+                            <p class="card-text">
+                                <base-input v-model:value="slack_webhook" type="text" placeholder="..."></base-input>
+                            </p>
+                            <base-button type="primary" v-on:click="update_slack_webhook">
+                                <span style="display: inline-block; margin-right: 6px;"><i class="fas fa-lock"></i></span>
+                                Update Slack webhook
+                            </base-button>
+                        </card>
+                        <card>
+                            <h4 class="card-title">Custom Webhook</h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Custom webhook</h6>
+                            <p class="card-text">
+                                <base-input v-model:value="custom_webhook" type="text" placeholder="..."></base-input>
+                            </p>
+                            <base-button type="primary" v-on:click="update_custom_webhook">
+                                <span style="display: inline-block; margin-right: 6px;"><i class="fas fa-lock"></i></span>
+                                Update custom webhook
+                            </base-button>
+                        </card>
+                        <card>
                             <h4 class="card-title">Miscellaneous Options</h4>
                             <div v-if="send_alert_emails">
                                 <base-button type="primary" v-on:click="set_email_reporting">
@@ -133,6 +166,9 @@ export default {
             chainload_uri: '',
             correlation_api_key: '',
             user_path: '',
+            discord_webhook: '',
+            slack_webhook: '',
+            custom_webhook: '',
             pages_to_collect: [],
             selected_page_to_collect: [],
             new_page_to_collect: '',
@@ -167,6 +203,9 @@ export default {
             const settings_keys = [
                 'chainload_uri',
                 'pgp_key',
+                'discord_webhook',
+                'slack_webhook',
+                'custom_webhook',
                 'correlation_api_key',
                 'pages_to_collect',
                 'rate_limit',
@@ -186,6 +225,21 @@ export default {
             await api_request.update_pgp_key(this.pgp_key);
             await this.pull_latest_settings();
             toastr.success('Your pgp key has been updated.', 'PGP Key Updated')
+        },
+        update_discord_webhook: async function() {
+            await api_request.update_discord_webhook(this.discord_webhook);
+            await this.pull_latest_settings();
+            toastr.success('Your Discord webhook has been updated.', 'Discord Webhook Updated')
+        },
+        update_slack_webhook: async function() {
+            await api_request.update_slack_webhook(this.slack_webhook);
+            await this.pull_latest_settings();
+            toastr.success('Your Slack webhook has been updated.', 'Slack Webhook Updated')
+        },
+        update_custom_webhook: async function() {
+            await api_request.update_custom_webhook(this.custom_webhook);
+            await this.pull_latest_settings();
+            toastr.success('Your custom webhook has been updated.', 'Custom Webhook Updated')
         },
         update_chainload_uri: async function() {
             await api_request.set_chainload_uri(this.chainload_uri);
