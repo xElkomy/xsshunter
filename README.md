@@ -1,91 +1,78 @@
-# XSSHunter
-## *Sets up in 5 minutes and requires no maintenance*
+# A *working* and easy to install fork of XSSHunter
+## **Fork features**
 
-The fastest way to set up XSS Hunter to test and find blind cross-site scripting vulnerabilities.
+**It works and it's simple to setup**: the current as of March 1, 2023 XSSHunter [repository](https://github.com/trufflesecurity/xsshunter) is not in a deploy-able state. This fork fixes that.
 
-## Setup (Five minutes, try not to skim too much)
+**Single user support and multi user support**: you can setup XSSHunter in either single user mode with only your account or in multi user mode using Google OAuth(allowing only the Gmail accounts you want to login). Compared, the original XSSHunter version only allows Google OAuth login and does not restrict the Gmail accounts allowed(all Gmail accounts can create an user and login).
 
-### Requirements
-* `docker` and `docker-compose` installed
-* Host with at least 2 GB of RAM
-* A hostname (e.g. `host.example.com`) which you can map to your server's IP (have DNS control for)
-* *[For Email Notifications]* To receive email notifications of XSS payload fires you'll need an email account with valid SMTP credentials. You can use many regular email accounts like Gmail for this purpose. This is not required if you don't want email notifications.
+**Slack, Discord and custom notifications**: this fork will send notifications to Slack, Discord and to your custom HTTP hook when a XSS triggers. Compared, the original XSSHunter version only sends email notifications.
 
-### Configuring Your Instance
-To set up XSS Hunter Express, modify the [`docker-compose.yaml`](https://github.com/mandatoryprogrammer/xsshunter-express/blob/main/docker-compose.yml) file with your appropriate settings/passwords/etc.
+**No blurred screenshots**
 
-The following are some YAML fields (in [`docker-compose.yaml`](https://github.com/mandatoryprogrammer/xsshunter-express/blob/main/docker-compose.yml)) you'll need to modify before starting the service:
+[![Twitter Follow](https://img.shields.io/twitter/follow/rs_loves_bugs?style=flat-square)](https://twitter.com/rs_loves_bugs)
 
-* `HOSTNAME`: Set this field to your hostname you want to use for your payloads and to access the web admin panel. Often this is as short as possible (e.g. `xss.ht`) so the payload can be fit into various fields for testing. This hostname should be mapped to the IP address of your instance (via a DNS `A` record).
-* `SSL_CONTACT_EMAIL`: In order to automatically set up and renew TLS/SSL certificates via [Let's Encrypt](https://letsencrypt.org/) you'll need to provide an email address.
+---
 
-The following are needed if you want email notifications:
+### **Requirements**
+* A server with `git`, `docker` and `docker compose` plugin installed. I'm using Ubuntu 22.04 LTS, you can follow [these instructions](https://docs.docker.com/engine/install/ubuntu/) to get `docker` and `docker compose` plugin on it
+* Two hostnames(for example `admin.example.com` and `xss.example.com`) you pointed to your server's ip address 
+* *[Optional for multi user login]* Google OAuth client id and client secret
+* *[Optional for email notifications]* Sendgrid API key
+* *[Optional for cloud storage]* Google Cloud Storage setup on the server 
 
-* `EMAIL_NOTIFICATIONS_ENABLED`: Leave enabled to receive email notifications (you must set this up via the below configurations as well).
-* `SENDGRID_API_KEY`: API key for Sendgrid
-* `SENDGRID_UNSUBSRIBE_GROUP_ID`: Unsubscribe group ID for emails
+---
 
-
-Finally, the following is worth considering for the security conscious:
-
-* `CONTROL_PANEL_ENABLED`: If you want to minimize the attack surface of your instance you can disable the web control panel. This makes it so you'll only receive emails of payload fires (results will still be stored on disk and in the database).
-
-
-### Build & Start XSS Hunter Express
-
-Once you've set it up, simply run the following commands to set up the service:
-
+### **Setup**
+Login as root on your server and run these commands:
 ```bash
-# Change into the repo directory
-cd xsshunter-express/
-# Start up postgres in the background
-docker-compose up -d postgresdb
-# Start up the service
-docker-compose up xsshunterexpress
+# clone the repository
+git clone https://github.com/rs-loves-bugs/xsshunter
+# enter the directory
+cd xsshunter
+# enabled the environment variables file
+cp env.example .env
 ```
+Edit the following variables in the `.env` file:
+* `SESSION_SECRET_KEY`: set this to a long random string
+* `HOSTNAME`: set this to the hostname you want the admin panel on(for example admin.example.com)
+* `XSS_HOSTNAME`: set this to the hostname you want the xss probe on(for example xss.example.com)
+* `PANEL_USERNAME`: set the admin panel username, it has to be an email address(if you setup and enable email notification they'll be sent there)
+* `PANEL_PASSWORD`: set the password for the admin panel username
 
-Assuming all has gone well, you'll see an admin password printed onto your screen. Use this to log into the web panel now hosted at `https://your-hostname.com/admin/`.
+Run this command to setup XSSHunter:
+```bash
+# build and start the containers
+docker compose up -d
+```
+When this finishes you can login on `https://admin.example.com` with the panel username and password. Go ahead and setup notifications and other settings in Settings.
 
-**NOTE**: The very first HTTP request to your instance will be slow due to the fact that the service will automatically generate a TLS/SSL certificate. This should only take ~15 seconds.
+Have fun!
 
-## Features
-* **Managed XSS payload fires**: Manage all of your XSS payloads in your XSS Hunter account's control panel.
-* **Powerful XSS Probes**: The following information is collected everytime a probe fires on a vulnerable page:
-    * The vulnerable page's URI 
-    * Origin of Execution 
-    * The Victim's IP Address 
-    * The Page Referer 
-    * The Victim's User Agent 
-    * All Non-HTTP-Only Cookies 
-    * The Page's Full HTML DOM 
-    * Full Screenshot of the Affected Page 
-    * Responsible HTTP Request (If an XSS Hunter compatible injection tool is used)
-    * Browser's reported time
-    * If the payload was fired in an iframe 
-* **Fully Dockerized**: Modify the config with your custom settings and launch with a single command!
-* **Automagically TLS/SSL Setup & Renewal**: Just create the proper DNS records and XSS Hunter Express with automatically utilize LetsEncrypt to set up and renew the appropriate TLS/SSL certificates.
-* **`gzip`-Compressed Payload Fire Images**: All images are stored with `gzip` compression to utilize less hard disk space on your instance.
-* **Minimize Attack Surface**: Optionally disable the web UI altogether to minimize the attack surface of your instance.
-* **Full Page Screenshots**: XSS Hunter probes utilize the HTML5 canvas API to generate a full screenshot of the vulnerable page which an XSS payload has fired on. With this feature you can peak into internal administrative panels, support desks, logging systems, and other internal web apps. This allows for more powerful reports that show the full impact of the vulnerability to your client or bug bounty program.
-* **XSS Payload Fire Email Reports**: XSS payload fires also send out detailed email reports which can be easily forwarded to the appropriate security contacts for easy reporting of critical bugs.
-* **Automatic Payload Generation**: XSS Hunter automatically generates XSS payloads for you to use in your web application security testing.
-* **Correlated Injections**: Perhaps the most powerful feature of XSS Hunter is the ability to correlated injection attempts with XSS payload fires. By using an [XSS Hunter compatible testing tool](https://github.com/mandatoryprogrammer/xsshunter_client) you can know immediately what caused a specific payload to fire (even weeks after the injection attempt was made!).
-* **Page Grabbing**: Upon your XSS payload firing you can specify a list of relative paths for the payload to automatically retrieve and store. This is useful in finding other vulnerabilities such as bad `crossdomain.xml` policies on internal systems which normally couldn't be accessed.
-* **Secondary Payload Loading**: Got a secondary payload that you want to load after XSS Hunter has done it's thing? XSS Hunter offers you the option to specify a secondary JavaScript payload to run after it's completed it's collection.
-* **Mobile Compatible**: Check your payloads at the bar without your laptop, the web interface is fully mobile ready.
+---
 
-## Screenshots
+### **Optional Setup**
+If you want email notifications(Discord/Slack notifications are better, Sendgrid is not really worth the trouble):
+* `EMAIL_NOTIFICATIONS_ENABLED`: set this variable to `true`
+* `EMAIL_FROM`: set this to the email address you want to send notifications from(one of your Sendgrid sender identity)
+* `SENDGRID_API_KEY`: set this to your Sendgrid API key
+---
+If you want a multi user setup:
+* `OAUTH_LOGIN`: set this variable to `true`
+* `CLIENT_ID`: set this to your Google OAuth client id
+* `CLIENT_SECRET`: set this to your Google OAuth client secret
+* `GMAIL_ACCOUNTS`: set this to a list of Gmail addresses you allow to create accounts and login, you need at least one address here. If you want to allow anyone remove this variable from the .env file
+---
+If you already have a webserver running on the host where you want XSS Hunter setup run this command to setup XSS Hunter:
 
-<img width="957" alt="blur" src="https://user-images.githubusercontent.com/3084554/215611441-1cf1401c-fd72-41d2-ae92-98b277b9701b.png">
-<img width="895" alt="dotgit" src="https://user-images.githubusercontent.com/3084554/215611449-3a75c49b-6e48-4347-89f9-bfbb8dbc16de.png">
-<img width="895" alt="secrets" src="https://user-images.githubusercontent.com/3084554/215611453-cecb391d-367b-45d0-86eb-1c465185dfb3.png">
-<img width="895" alt="cors" src="https://user-images.githubusercontent.com/3084554/215611455-5831c4a6-fd35-457e-82bd-524d5d494319.png">
+Run this command to setup XSS Hunter:
+```bash
+# build and start the containers
+docker compose up -d xsshunterexpress-db xsshunterexpress-service
+```
+You can use `apache.conf` or `nginx.conf` as guides to setup vhosts on your web server.
 
+### **Credits**
 
-## Credits
-
-* The front-end is built in Vue and utilizes the [`vue-black-dashboard`](https://github.com/creativetimofficial/vue-black-dashboard) framework. Licensed under MIT (see [https://github.com/creativetimofficial/vue-black-dashboard#licensing](https://github.com/creativetimofficial/vue-black-dashboard#licensing)).
-
-## Security Vulnerabilities
-
-Find a security vulnerability in this service? Nice job! Please email me at `mandatory(at)gmail.com` and I'll try to fix it as soon as possible.
+* Truffle Security for keeping XSS Hunter alive
+* [@catmandx](https://github.com/catmandx) for sharing their experience trying to deploy
+* [@mandatoryprogrammer](https://github.com/mandatoryprogrammer) for creating XSS Hunter 
