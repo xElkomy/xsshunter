@@ -5,11 +5,14 @@
 
 **Single user support and multi user support**: you can setup XSSHunter in either single user mode with only your account or in multi user mode using Google OAuth(allowing only the Gmail accounts you want to login). Compared, the original XSSHunter version only allows Google OAuth login and does not restrict the Gmail accounts allowed(all Gmail accounts can create an user and login).
 
-**Slack, Discord and custom notifications**: this fork will send notifications to Slack, Discord and to your custom HTTP hook when a XSS triggers. Compared, the original XSSHunter version only sends email notifications.
-
 **No blurred screenshots**
 
-[![Twitter Follow](https://img.shields.io/twitter/follow/rs_loves_bugs?style=flat-square)](https://twitter.com/rs_loves_bugs)
+**Slack, Discord and custom notifications**: this fork will send notifications to Slack, Discord and to your custom HTTP hook when a XSS triggers. Compared, the original XSSHunter version only sends email notifications.
+
+
+[![Twitter](https://img.shields.io/badge/-@rs__loves__bugs-%232B90D9?style=for-the-badge&logo=twitter&logoColor=white&label=twitter)](https://twitter.com/rs_loves_bugs)&nbsp;
+[![Mastodon](https://img.shields.io/badge/-@rs__loves__bugs-%232B90D9?style=for-the-badge&logo=mastodon&logoColor=white&label=infosec.exchange)](https://infosec.exchange/@rs_loves_bugs)
+
 
 ---
 
@@ -51,6 +54,17 @@ Have fun!
 ---
 
 ### **Optional Setup**
+
+Everytime you edit the `.env` you will need to restart the containers:
+```bash
+# edit the .env file in your favorite editor
+nano .env 
+# stop the containers
+docker compose down
+# start the containers
+docker compose up -d
+```
+
 If you want email notifications(Discord/Slack notifications are better, Sendgrid is not really worth the trouble):
 * `EMAIL_NOTIFICATIONS_ENABLED`: set this variable to `true`
 * `EMAIL_FROM`: set this to the email address you want to send notifications from(one of your Sendgrid sender identity)
@@ -62,17 +76,19 @@ If you want a multi user setup:
 * `CLIENT_SECRET`: set this to your Google OAuth client secret
 * `GMAIL_ACCOUNTS`: set this to a list of Gmail addresses you allow to create accounts and login, you need at least one address here. If you want to allow anyone remove this variable from the .env file
 ---
-If you already have a webserver running on the host where you want XSS Hunter setup run this command to setup XSS Hunter:
+If you already have a webserver running on the host where you want XSSHunter setup run this command to setup XSSHunter:
 
-Run this command to setup XSS Hunter:
+Run this command to setup XSSHunter:
 ```bash
 # build and start the containers
 docker compose up -d xsshunterexpress-db xsshunterexpress-service
 ```
 You can use `apache.conf` or `nginx.conf` as guides to setup vhosts on your web server.
 
+---
+
 ### **Credits**
 
-* Truffle Security for keeping XSS Hunter alive
+* Truffle Security for keeping XSSHunter alive
 * [@catmandx](https://github.com/catmandx) for sharing their experience trying to deploy
-* [@mandatoryprogrammer](https://github.com/mandatoryprogrammer) for creating XSS Hunter 
+* [@mandatoryprogrammer](https://github.com/mandatoryprogrammer) for creating XSSHunter 
