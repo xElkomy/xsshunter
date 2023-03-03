@@ -165,7 +165,7 @@
                                             <div>
                                                 <p class="report-section-label mr-2">Secrets</p>
                                                 <small slot="helperText" class="form-text text-muted report-section-description">
-                                                    TruffleHog-lite, used to capture any secrets harvested from the HTML and Javascript.
+                                                    powered by TruffleHog, capture any secrets harvested from the HTML and Javascript.
                                                 </small>
                                             </div>
                                             <div class="m-2 mt-4" v-if="report.secrets">

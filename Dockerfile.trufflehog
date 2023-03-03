@@ -1,0 +1,11 @@
+FROM python:3.11-alpine
+RUN apk add --no-cache bash git wget openssh-client ca-certificates \
+    && rm -rf /var/cache/apk/* && \
+    update-ca-certificates
+RUN wget https://github.com/trufflesecurity/trufflehog/releases/download/v3.28.5/trufflehog_3.28.5_linux_amd64.tar.gz -O /tmp/trufflehog.tar.gz && cd /tmp && tar zxf trufflehog.tar.gz && mv trufflehog /usr/bin && rm trufflehog.tar.gz LICENSE README.md
+COPY ./requirements.txt /app/requirements.txt
+WORKDIR /app
+RUN chmod +x /usr/bin/trufflehog
+RUN pip install -r requirements.txt
+COPY trufflehog.py /app
+CMD ["gunicorn", "--bind", "0.0.0.0", "trufflehog:app" ]

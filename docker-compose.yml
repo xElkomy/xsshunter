@@ -22,13 +22,20 @@ services:
     env_file:
       - .env
     ports:
-      - "127.0.0.1:8080:8080"
+      - 8080:8080
     volumes:
       - ./payload-fire-images:/app/payload-fire-images
       - ~/.config/gcloud/application_default_credentials.json:/gcloud.json
     depends_on:
       xsshunterexpress-db:
         condition: service_healthy
+  xsshunterexpress-trufflehog:
+    build:
+      dockerfile: Dockerfile.trufflehog
+    container_name: xsshunterexpress-trufflehog
+    restart: unless-stopped
+    ports:
+      - 8000:8000
   xsshunterexpress-proxy:
     image: caddy:alpine
     container_name: xsshunterexpress-proxy

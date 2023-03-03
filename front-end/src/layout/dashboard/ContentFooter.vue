@@ -9,7 +9,7 @@
         </li>
       </ul>
       <div class="copyright">
-        Forked from the original author: <a href="https://twitter.com/IAmMandatory" target="_blank"><code>@IAmMandatory</code></a>
+        Forked by <a href="https://twitter.com/rs_loves_bugs" target="_blank"><code>@rs_loves_bugs</code></a> from a <a href="https://twitter.com/TruffleSec" target="_blank"><code>@TruffleSec</code></a> fork from the original author: <a href="https://twitter.com/IAmMandatory" target="_blank"><code>@IAmMandatory</code></a>
       </div>
     </div>
   </footer>

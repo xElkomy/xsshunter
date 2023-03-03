@@ -20,6 +20,7 @@ const constants = require('./constants.js');
 const Sentry = require('@sentry/node');
 const Tracing = require("@sentry/tracing");
 const Profiling = require("@sentry/profiling-node");
+const fetch = require('node-fetch');
 
 function set_secure_headers(req, res) {
 	res.set("X-XSS-Protection", "mode=block");
@@ -111,8 +112,7 @@ async function get_app_server() {
 		res.set("Access-Control-Allow-Origin", "*");
 		res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
 		res.set("Access-Control-Allow-Headers", "Content-Type, X-Requested-With");
-		res.set("Access-Control-Max-Age", "86400");
-
+		res.set("Access-Control-Max-Age", "86400");    
 		const page_insert_response = await CollectedPages.create({
 			id: uuid.v4(),
 			uri: req.body.uri,
@@ -216,6 +216,42 @@ async function get_app_server() {
             console.debug("No user found for path provided");
             return
         }
+        
+        try {
+
+            const secrets_response = await fetch('http://xsshunterexpress-trufflehog:8000/trufflehog', {
+                method: 'POST',
+                headers: {
+                    'Accept': 'application/json, text/plain, */*',
+                    'Content-Type': 'text/plain'
+                },
+                body: req.body.text 
+            });
+
+            const secrets_data = await secrets_response.json();
+            secret_data_result = []
+            
+            Object.entries(secrets_data).forEach(([key, value]) => {
+                detector_value = ""
+                detector_name = ""
+                decoder_name = ""
+                Object.entries(value).forEach(([key, value]) => {
+                    if(key === "Raw")
+                        detector_value = value
+                    if(key === "DetectorName")
+                        detector_name = value
+                    if(key === "DecoderName")
+                        decoder_name = value
+                })
+                detector = detector_name + '(' + decoder_name + ')' 
+                data_finding = {"secret_type": detector, "secret_value": detector_value};
+                secret_data_result.push(data_finding); 
+            });
+
+        } catch(e) {
+            console.log("Error when checking with Trufflehog for secrets");
+            secret_data_result = []
+        }
 
         console.debug(`Got payload for user id ${user.id}`);
         
@@ -316,7 +352,7 @@ async function get_app_server() {
                 user_agent: req.body['user-agent'],
                 cookies: req.body.cookies,
                 title: req.body.title,
-                secrets: JSON.parse(req.body.secrets),
+                secrets: JSON.parse(JSON.stringify(secret_data_result)),
                 origin: req.body.origin,
                 screenshot_id: payload_fire_image_id,
                 was_iframe: (req.body.was_iframe === 'true'),

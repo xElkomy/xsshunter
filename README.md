@@ -5,6 +5,8 @@
 
 **Single user support and multi user support**: you can setup XSSHunter in either single user mode with only your account or in multi user mode using Google OAuth(allowing only the Gmail accounts you want to login). Compared, the original XSSHunter version only allows Google OAuth login and does not restrict the Gmail accounts allowed(all Gmail accounts can create an user and login).
 
+**Full Trufflehog support**: Detect secrets on the page your payload fired. The original version implemented simple regex checks for AWS, GCP and Slack keys. This fork supports all the current ~750 detectors from [Trufflehog](https://github.com/trufflesecurity/trufflehog/).
+
 **No blurred screenshots**
 
 **Slack, Discord and custom notifications**: this fork will send notifications to Slack, Discord and to your custom HTTP hook when a XSS triggers. Compared, the original XSSHunter version only sends email notifications.
@@ -53,6 +55,23 @@ Have fun!
 
 ---
 
+### **Upgrading**
+
+Upgrading should be as simple as running these 4 commands:
+
+```bash
+# change directory to xsshunter
+cd xsshunter
+# stop the containers
+docker compose down
+# pull the update from Github
+git pull
+# build and start the containers
+docker compose up -d --build
+```
+
+---
+
 ### **Optional Setup**
 
 Everytime you edit the `.env` you will need to restart the containers:
@@ -81,9 +100,9 @@ If you already have a webserver running on the host where you want XSSHunter set
 Run this command to setup XSSHunter:
 ```bash
 # build and start the containers
-docker compose up -d xsshunterexpress-db xsshunterexpress-service
+docker compose up -d xsshunterexpress-db xsshunterexpress-service xsshunterexpress-trufflehog
 ```
-You can use `apache.conf` or `nginx.conf` as guides to setup vhosts on your web server.
+You can use `apache.conf` or `nginx.conf` config files from this repository as guides to setup vhosts on your web server.
 
 ---
 

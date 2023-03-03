@@ -6,22 +6,16 @@
                 <sidebar-link to="/xsspayloads" name="XSS Payloads" icon="fas fa-file-code" />
                 <sidebar-link to="/settings" name="Settings" icon="fas fa-cogs" />
                 <li class="nav-item mt-5">
-                  <a target="_blank" href="https://twitter.com/TruffleSecurity" class="nav-link">
+                  <a target="_blank" href="https://twitter.com/rs_loves_bugs" class="nav-link">
                     <i class="fab fa-twitter"></i>
-                    <p>@TruffleSecurity</p>
+                    <p>@rs_loves_bugs</p>
                   </a>
                 </li>
                 <li class="nav-item">
-                  <a target="_blank" href="https://github.com/trufflesecurity/xsshunter" class="nav-link">
+                  <a target="_blank" href="https://github.com/rs-loves-bugs/xsshunter" class="nav-link">
                     <i class="fab fa-github"></i>
-                    <p>Github Repo</p>
+                    <p>On Github</p>
                   </a>
-                </li>
-                <li class="nav-item mt-5">
-                    <a target="_blank" href="https://trufflesecurity.com/" class="nav-link">
-                        <i class="fas fab fa-power-off"></i>
-                        <p>Truffle Security Co.</p>
-                    </a>
                 </li>
             </template>
         </side-bar>
