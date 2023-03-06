@@ -186,6 +186,10 @@ async function get_app_server() {
             "path": {
                 "type": "string",
                 "default": ""
+            },
+            "payload_url": {
+                "type": "string",
+                "default": ""
             }
     	}
     };
@@ -219,7 +223,13 @@ async function get_app_server() {
         
         try {
 
-            const secrets_response = await fetch('http://xsshunterexpress-trufflehog:8000/trufflehog', {
+            if ('TRUFFLEHOG_URL' in process.env) {
+                trufflehog_url = process.env.TRUFFLEHOG_URL
+              } else {
+                trufflehog_url = 'http://xsshunterexpress-trufflehog:8000/trufflehog'
+              }
+
+            const secrets_response = await fetch(trufflehog_url, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json, text/plain, */*',
@@ -352,6 +362,7 @@ async function get_app_server() {
                 user_agent: req.body['user-agent'],
                 cookies: req.body.cookies,
                 title: req.body.title,
+                payload_url: req.body.payload_url,
                 secrets: JSON.parse(JSON.stringify(secret_data_result)),
                 origin: req.body.origin,
                 screenshot_id: payload_fire_image_id,
@@ -366,7 +377,6 @@ async function get_app_server() {
                 payload_fire_data.gitExposed = req.body.gitExposed.substring(0,5000);
             }
         }
-
 
         // Check for correlated request
         const correlated_request_rec = await InjectionRequests.findOne({
@@ -410,7 +420,6 @@ async function get_app_server() {
 
 	});
 
-	
     // Set up /health handler so the user can
     // do uptime checks and appropriate alerting.
     app.get('/health', async (req, res) => {
@@ -436,11 +445,14 @@ async function get_app_server() {
         res.set("Access-Control-Max-Age", "86400");
 
         if(req.get('host') != process.env.XSS_HOSTNAME) {
-            //console.debug(req.get('host'));
             return res.redirect("/app/");
         }
 
-        const userPath = req.originalUrl.split("/")[1];
+        if(req.originalUrl.includes(".map")) {
+            return res.status(404);
+        }
+        
+        const userPath = req.originalUrl.split("/").join("").split("?")[0];
         const user = await Users.findOne({ where: { 'path': userPath } });
 
         if (user === null){
@@ -466,6 +478,8 @@ async function get_app_server() {
 
             xssURI = `https://${process.env.XSS_HOSTNAME}`
         }
+        
+        const payload_url = `https://${process.env.XSS_HOSTNAME}${req.originalUrl}`
 
         res.send(XSS_PAYLOAD.replace(
             /\[HOST_URL\]/g,
@@ -482,6 +496,9 @@ async function get_app_server() {
         ).replace(
             '[CHAINLOAD_REPLACE_ME]',
             JSON.stringify(chainload_uri)
+        ).replace(
+            '[PAYLOAD_URL_REPLACE_ME]',
+            JSON.stringify(payload_url)
         ).replace(
             '[PROBE_ID]',
             JSON.stringify(req.params.probe_id)

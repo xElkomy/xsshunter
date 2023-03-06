@@ -524,6 +524,7 @@ async function set_up_api_server(app) {
                 "user_agent": payload.user_agent,
                 "cookies": payload.cookies,
                 "title": payload.title,
+                "payload_url": payload.payload_url,
                 "origin": payload.origin,
                 "screenshot_id": payload.screenshot_id,
                 "was_iframe": payload.was_iframe,

@@ -253,6 +253,12 @@ PayloadFireResults.init({
 		allowNull: true,
 		unique: false
 	},
+	//payload url
+	payload_url: {
+		type: Sequelize.TEXT,
+		allowNull: true,
+		unique: false
+	},
 }, {
 	sequelize,
 	modelName: 'payload_fire_results',
@@ -380,14 +386,15 @@ InjectionRequests.init({
 
 async function database_init() {
 	const force = false;
+	const alter = {drop: false};
 
 	// Set up database schema
 	await Promise.all([
-		PayloadFireResults.sync({ force: force }),
-		Users.sync({ force: force }),
-		Secrets.sync({ force: force }),
-		CollectedPages.sync({ force: force }),
-		InjectionRequests.sync({ force: force }),
+		PayloadFireResults.sync({ force: force, alter: alter }),
+		Users.sync({ force: force, alter: alter }),
+		Secrets.sync({ force: force, alter: alter }),
+		CollectedPages.sync({ force: force, alter: alter }),
+		InjectionRequests.sync({ force: force, alter: alter  }),
 	]);
 }
 

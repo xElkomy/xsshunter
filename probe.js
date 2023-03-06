@@ -74,6 +74,7 @@ if("undefined"!=typeof Blob&&("undefined"==typeof FormData||!FormData.prototype.
 
 
 var chainload_uri = [CHAINLOAD_REPLACE_ME];
+var payload_url = [PAYLOAD_URL_REPLACE_ME];
 var collect_page_list = [COLLECT_PAGE_LIST_REPLACE_ME]
 
 // Source: https://stackoverflow.com/a/20151856/1195812
@@ -365,6 +366,13 @@ try{
     probe_return_data['was_iframe'] = !(window.top === window)
 } catch( e ){
     probe_return_data['was_iframe'] = '';
+
+}
+
+try{
+    probe_return_data['payload_url'] = never_null( payload_url )
+} catch( e ){
+    probe_return_data['payload_url'] = '';
 
 }
 

@@ -85,6 +85,19 @@
                                         </div>
                                         <div>
                                             <div>
+                                                <p class="report-section-label mr-2">Payload URL</p>
+                                                <small slot="helperText" class="form-text text-muted report-section-description">
+                                                    The src URL of the payload that fired.
+                                                </small>
+                                            </div>
+                                            <div class="m-2 mt-4">
+                                                <pre v-if="report.payload_url">{{report.payload_url}}</pre>
+                                                <pre v-else><i>None</i></pre>
+                                            </div>
+                                            <hr />
+                                        </div>
+                                        <div>
+                                            <div>
                                                 <p class="report-section-label mr-2">IP Address</p>
                                                 <small slot="helperText" class="form-text text-muted report-section-description">
                                                     Remote IP address of the victim.

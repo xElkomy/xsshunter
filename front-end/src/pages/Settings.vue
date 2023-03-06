@@ -64,7 +64,7 @@
                         </card>
                         <card>
                             <h4 class="card-title">Custom Webhook</h4>
-                            <h6 class="card-subtitle mb-2 text-muted">Custom webhook</h6>
+                            <h6 class="card-subtitle mb-2 text-muted">When a payload fires XSSHunter will send a post request to this URL.</h6>
                             <p class="card-text">
                                 <base-input v-model:value="custom_webhook" type="text" placeholder="..."></base-input>
                             </p>
@@ -317,4 +317,3 @@ textarea {
   resize: none;
 }
 </style>
-
