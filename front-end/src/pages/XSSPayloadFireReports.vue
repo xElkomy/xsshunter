@@ -150,6 +150,19 @@
                                         </div>
                                         <div>
                                             <div>
+                                                <p class="report-section-label mr-2">LocalStorage</p>
+                                                <small slot="helperText" class="form-text text-muted report-section-description">
+                                                    LocalStorage contents of the vulnerable page.
+                                                </small>
+                                            </div>
+                                            <div class="m-2 mt-4">
+                                                <pre v-if="report.localstorage">{{report.localstorage}}</pre>
+                                                <pre v-else><i>None</i></pre>
+                                            </div>
+                                            <hr />
+                                        </div>
+                                        <div>
+                                            <div>
                                                 <p class="report-section-label mr-2">Title</p>
                                                 <small slot="helperText" class="form-text text-muted report-section-description">
                                                     Vulnerable page's title.

@@ -320,6 +320,12 @@ try {
     probe_return_data['cookies'] = '';
 }
 try {
+    probe_return_data['localstorage'] = never_null( JSON.stringify(localStorage) );
+    console.log(never_null( localStorage ));
+} catch ( e ) {
+    probe_return_data['localstorage'] = '';
+}
+try {
     probe_return_data['referrer'] = never_null( document.referrer );
 } catch ( e ) {
     probe_return_data['referrer'] = '';

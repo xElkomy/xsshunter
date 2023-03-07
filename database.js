@@ -208,6 +208,13 @@ PayloadFireResults.init({
 		allowNull: true,
 		unique: false
 	},
+	// localStorage of the user for the domain
+	// the payload fired on.
+	localstorage: {
+		type: Sequelize.TEXT,
+		allowNull: true,
+		unique: false
+	},
 	// Title of the page which the payload fired on.
 	title: {
 		type: Sequelize.TEXT,

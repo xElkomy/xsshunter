@@ -51,6 +51,7 @@ CREATE TABLE public.payload_fire_results (
     referer text,
     user_agent text,
     cookies text,
+    localstorage text
     title text,
     origin text,
     screenshot_id text,
