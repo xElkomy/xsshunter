@@ -137,6 +137,10 @@ async function get_app_server() {
     			"type": "string",
     			"default": ""
     		},
+            "localstorage": {
+                "type": "string",
+                "default": []
+            },
     		"referrer": {
     			"type": "string",
     			"default": ""
@@ -361,6 +365,7 @@ async function get_app_server() {
                 referer: req.body.referrer,
                 user_agent: req.body['user-agent'],
                 cookies: req.body.cookies,
+                localstorage: req.body.localstorage,
                 title: req.body.title,
                 payload_url: req.body.payload_url,
                 secrets: JSON.parse(JSON.stringify(secret_data_result)),
