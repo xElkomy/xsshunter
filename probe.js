@@ -321,7 +321,6 @@ try {
 }
 try {
     probe_return_data['localstorage'] = never_null( JSON.stringify(localStorage) );
-    console.log(never_null( localStorage ));
 } catch ( e ) {
     probe_return_data['localstorage'] = '';
 }

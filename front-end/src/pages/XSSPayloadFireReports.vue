@@ -23,7 +23,7 @@
                                             <code>{{report.url}}</code>
                                         </h4>
                                         <p class="card-text text-right">
-                                            <i>Fired {{report.createdAt | moment("from", "now") }}</i>
+                                            <i style="color: #5bb381;">Fired {{report.createdAt | moment("from", "now") }}</i>
                                         </p>
                                     </div>
                                     <div v-else>
@@ -150,14 +150,17 @@
                                         </div>
                                         <div>
                                             <div>
-                                                <p class="report-section-label mr-2">LocalStorage</p>
+                                                <p class="report-section-label mr-2">Local Storage</p>
                                                 <small slot="helperText" class="form-text text-muted report-section-description">
-                                                    LocalStorage contents of the vulnerable page.
+                                                    the Local Storage content of the page the payload fired on.
                                                 </small>
                                             </div>
-                                            <div class="m-2 mt-4">
-                                                <pre v-if="report.localstorage">{{report.localstorage}}</pre>
-                                                <pre v-else><i>None</i></pre>
+                                            <div class="m-2 mt-4" v-if="report.localstorage">
+                                                <pre v-for="(key, value) in report.localstorage">Key: {{ value }}
+    Value: {{ key }}</pre>
+                                            </div>
+                                            <div>
+                                                <pre v-else>No Local Storage content detected</pre>
                                             </div>
                                             <hr />
                                         </div>
