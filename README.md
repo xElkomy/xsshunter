@@ -3,7 +3,7 @@
 
 **It works and it's simple to setup**: the current as of March 1, 2023 XSSHunter [repository](https://github.com/trufflesecurity/xsshunter) is not in a deploy-able state. This fork fixes that.
 
-**Single user support and multi user support**: you can setup XSSHunter in either single user mode with only your account or in multi user mode using Google OAuth(allowing only the Gmail accounts you want to login). Compared, the original XSSHunter version only allows Google OAuth login and does not restrict the Gmail accounts allowed(all Gmail accounts can create an user and login).
+**Single user support and multi user support**: you can setup XSSHunter in either single user mode with only your account or in multi user mode using either the env file or with Google OAuth(allowing only the Gmail accounts you want to login). Compared, the original XSSHunter version only allows Google OAuth login and does not restrict the Gmail accounts allowed(all Gmail accounts can create an user and login).
 
 **Full Trufflehog support**: Detect secrets on the page your payload fired. The original version implemented simple regex checks for AWS, GCP and Slack keys. This fork supports all the current ~750 detectors from [Trufflehog](https://github.com/trufflesecurity/trufflehog/).
 
