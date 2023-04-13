@@ -172,8 +172,20 @@ async function set_up_api_server(app) {
 		return
     });
 
-    app.post(constants.API_BASE_PATH + 'userlogin', async (req, res) => {
+	app.post(constants.API_BASE_PATH + 'userlogin', async (req, res) => {
       if(process.env.PANEL_USERNAME === req.body.email && process.env.PANEL_PASSWORD === req.body.password) {
+        const [user, created] = await Users.findOrCreate({ where: { 'email': req.body.email } });
+        if(created){
+          user.path = makeRandomPath(10);
+            user.injectionCorrelationAPIKey = makeRandomPath(20);
+            user.save();
+            console.log(`Created new user ID: ${user.id}`)
+        }
+          req.session.email = user.email;
+          req.session.user_id = user.id;
+          req.session.authenticated = true;
+          res.send("Logged in!");
+        } else if(process.env.PANEL_USERPASS_LIST && process.env.PANEL_USERPASS_LIST.includes("\"" + req.body.email + ":" + req.body.password + "\"")) {
         const [user, created] = await Users.findOrCreate({ where: { 'email': req.body.email } });
         if(created){
           user.path = makeRandomPath(10);
