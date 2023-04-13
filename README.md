@@ -91,7 +91,10 @@ If you want email notifications(Discord/Slack notifications are better, Sendgrid
 * `EMAIL_FROM`: set this to the email address you want to send notifications from(one of your Sendgrid sender identity)
 * `SENDGRID_API_KEY`: set this to your Sendgrid API key
 ---
-If you want a multi user setup:
+If you want a multi panel users setup:
+* `PANEL_USERPASS_LIST`: set this variable like this `["some_email@example.com:somepass", "another_email@another_example.com:anotherpass"]`
+---
+If you want a multi user setup with Google OAuth:
 * `OAUTH_LOGIN`: set this variable to `true`
 * `CLIENT_ID`: set this to your Google OAuth client id
 * `CLIENT_SECRET`: set this to your Google OAuth client secret
