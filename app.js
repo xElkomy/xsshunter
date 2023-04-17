@@ -457,13 +457,21 @@ async function get_app_server() {
             return res.status(404);
         }
         
-        const userPath = req.originalUrl.split("/").join("").split("?")[0];
-        const user = await Users.findOne({ where: { 'path': userPath } });
+        let user, userPath;
+
+        if(process.env.ALLOW_EMPTY_USERPATH && process.env.ALLOW_EMPTY_USERPATH.toLowerCase() === "true") {
+            user = await Users.findOne({ where: { 'email': process.env.PANEL_USERNAME.toLowerCase() } });
+            userPath = user.path;
+        } else {
+            userPath = req.originalUrl.split("/").join("").split("?")[0];
+            user = await Users.findOne({ where: { 'path': userPath } });
+        }
 
         if (user === null){
-            console.debug(`No user found for path ${userPath}`);
+            console.debug("No user found");
             return res.send("Hey");
         }
+        
         let pgp_key = user.pgp_key;
 
         if (! pgp_key){
