@@ -77,6 +77,16 @@ Users.init({
         allownull: true,
 		unique: false
     },
+	telegram_webhook: {
+        type: Sequelize.TEXT,
+        allownull: true,
+		unique: false
+    },
+	telegram_chat_id: {
+        type: Sequelize.TEXT,
+        allownull: true,
+		unique: false
+    },
 
 
 

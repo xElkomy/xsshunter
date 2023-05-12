@@ -720,6 +720,8 @@ async function set_up_api_server(app) {
         returnObj.send_alert_emails = user.sendEmailAlerts;
         returnObj.discord_webhook = user.discord_webhook;
         returnObj.slack_webhook = user.slack_webhook;
+        returnObj.telegram_webhook = user.telegram_webhook;
+        returnObj.telegram_chat_id = user.telegram_chat_id;
         returnObj.custom_webhook = user.custom_webhook;
        
         res.status(200).json({
@@ -757,6 +759,16 @@ async function set_up_api_server(app) {
             },
 
             slack_webhook: {
+                type: 'string',
+                required: false,
+            },
+
+            telegram_webhook: {
+                type: 'string',
+                required: false,
+            },
+
+            telegram_chat_id: {
                 type: 'string',
                 required: false,
             },
@@ -825,6 +837,18 @@ async function set_up_api_server(app) {
             user.slack_webhook = req.body.slack_webhook;
         }else if (req.body.slack_webhook === ""){
             user.slack_webhook = null;
+        }
+
+        if(req.body.telegram_webhook) {
+            user.telegram_webhook = req.body.telegram_webhook;
+        }else if (req.body.telegram_webhook === ""){
+            user.telegram_webhook = null;
+        }
+
+        if(req.body.telegram_chat_id) {
+            user.telegram_chat_id = req.body.telegram_chat_id;
+        }else if (req.body.telegram_chat_id === ""){
+            user.telegram_chat_id = null;
         }
 
         if(req.body.custom_webhook) {

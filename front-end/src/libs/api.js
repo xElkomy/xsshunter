@@ -170,6 +170,26 @@ async function update_slack_webhook(slack_webhook) {
     );
 }
 
+async function update_telegram_webhook(telegram_webhook) {
+    return api_request(
+        'PUT',
+        `/api/v1/settings`,
+        {
+            "telegram_webhook": telegram_webhook,
+        }
+    );
+}
+
+async function update_telegram_chat_id(telegram_chat_id) {
+    return api_request(
+        'PUT',
+        `/api/v1/settings`,
+        {
+            "telegram_chat_id": telegram_chat_id,
+        }
+    );
+}
+
 async function update_custom_webhook(custom_webhook) {
     return api_request(
         'PUT',
@@ -231,6 +251,8 @@ module.exports = {
     update_custom_webhook,
     update_discord_webhook,
     update_slack_webhook,
+    update_telegram_webhook,
+    update_telegram_chat_id,
     update_user_path,
     get_payload_fires,
     delete_payload_fires,
