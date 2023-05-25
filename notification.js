@@ -93,9 +93,28 @@ async function send_custom_notification(xss_payload_fire_data, custom_webhook) {
 	return true;
 }
 
+async function send_telegram_notification(xss_payload_fire_data, telegram_webhook, telegram_chat_id) {
+	const fire_location = (!xss_payload_fire_data.encrypted ? xss_payload_fire_data.url : 'With An Encryption Key');
+	fetch(
+		telegram_webhook,
+		{
+		  method: 'post',
+		  headers: {
+			'Content-Type': 'application/json',
+		  },
+		  body: JSON.stringify({
+		    chat_id: telegram_chat_id,
+			text: `XSS triggered on ${fire_location}`,
+		  }),
+		}
+	  );
+	return true;
+}
+
 module.exports = {
 	send_email_notification,
 	send_discord_notification,
 	send_slack_notification,
-	send_custom_notification
+	send_custom_notification,
+	send_telegram_notification
  }

@@ -63,6 +63,28 @@
                             </base-button>
                         </card>
                         <card>
+                            <h4 class="card-title">Telegram Webhook</h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Telegram webhook</h6>
+                            <p class="card-text">
+                                <base-input v-model:value="telegram_webhook" type="text" placeholder="..."></base-input>
+                            </p>
+                            <base-button type="primary" v-on:click="update_telegram_webhook">
+                                <span style="display: inline-block; margin-right: 6px;"><i class="fas fa-lock"></i></span>
+                                Update Telegram webhook
+                            </base-button>
+                        </card>
+                        <card>
+                            <h4 class="card-title">Telegram telegram_chat_id</h4>
+                            <h6 class="card-subtitle mb-2 text-muted">Telegram chat_id</h6>
+                            <p class="card-text">
+                                <base-input v-model:value="telegram_chat_id" type="text" placeholder="..."></base-input>
+                            </p>
+                            <base-button type="primary" v-on:click="update_telegram_chat_id">
+                                <span style="display: inline-block; margin-right: 6px;"><i class="fas fa-lock"></i></span>
+                                Update Telegram chat_id
+                            </base-button>
+                        </card>
+                        <card>
                             <h4 class="card-title">Custom Webhook</h4>
                             <h6 class="card-subtitle mb-2 text-muted">When a payload fires XSSHunter will send a post request to this URL.</h6>
                             <p class="card-text">
@@ -168,6 +190,8 @@ export default {
             user_path: '',
             discord_webhook: '',
             slack_webhook: '',
+            telegram_webhook: '',
+            telegram_chat_id: '',
             custom_webhook: '',
             pages_to_collect: [],
             selected_page_to_collect: [],
@@ -205,6 +229,8 @@ export default {
                 'pgp_key',
                 'discord_webhook',
                 'slack_webhook',
+                'telegram_webhook',
+                'telegram_chat_id',
                 'custom_webhook',
                 'correlation_api_key',
                 'pages_to_collect',
@@ -235,6 +261,16 @@ export default {
             await api_request.update_slack_webhook(this.slack_webhook);
             await this.pull_latest_settings();
             toastr.success('Your Slack webhook has been updated.', 'Slack Webhook Updated')
+        },
+        update_telegram_webhook: async function() {
+            await api_request.update_telegram_webhook(this.telegram_webhook);
+            await this.pull_latest_settings();
+            toastr.success('Your Telegram webhook has been updated.', 'Telegram Webhook Updated')
+        },
+        update_telegram_chat_id: async function() {
+            await api_request.update_telegram_chat_id(this.telegram_chat_id);
+            await this.pull_latest_settings();
+            toastr.success('Your Telegram chat_id has been updated.', 'Telegram chat_id Updated')
         },
         update_custom_webhook: async function() {
             await api_request.update_custom_webhook(this.custom_webhook);

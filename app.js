@@ -423,6 +423,14 @@ async function get_app_server() {
 			await notification.send_custom_notification(payload_fire_data, user.custom_webhook);
 		}
 
+		if(user.telegram_webhook) {
+			payload_fire_data.screenshot_url = `https://${process.env.HOSTNAME}/screenshots/${payload_fire_data.screenshot_id}.png`;
+            payload_fire_data.xsshunter_url = `https://${process.env.HOSTNAME}`;
+			await notification.send_telegram_notification(payload_fire_data, user.telegram_webhook, user.telegram_chat_id);
+		}
+
+
+
 	});
 
     // Set up /health handler so the user can
