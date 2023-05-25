@@ -11,7 +11,7 @@
 
 **Local Storage**: Read all data stored in Local Storage for the page the payload fired on
 
-**Slack, Discord and custom notifications**: this fork will send notifications to Slack, Discord and to your custom HTTP hook when a XSS triggers. Compared, the original XSSHunter version only sends email notifications.
+**Slack, Discord, Telegram and custom notifications**: this fork will send notifications to Slack, Discord and to your custom HTTP hook when a XSS triggers. Compared, the original XSSHunter version only sends email notifications.
 
 
 [![Twitter](https://img.shields.io/badge/-@rs__loves__bugs-%232B90D9?style=for-the-badge&logo=twitter&logoColor=white&label=twitter)](https://twitter.com/rs_loves_bugs)&nbsp;
