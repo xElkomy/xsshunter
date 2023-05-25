@@ -125,10 +125,13 @@ let check_cors = async function(){
 let check_git = async function(){
     const search = new RegExp("[a-f0-9]{40}", "y");
     let res = await fetch("/.git/HEAD");
-    if (response.status === 200) {
+    const status = await res.status
+    if (status === 200) {
         let text = await res.text();
         if (text !== false && (text.startsWith("ref: refs/heads/") === true || search.test(text) === true)) {
-            return text
+            let configres = await fetch("/.git/config");
+            let configtext = await configres.text()
+            return configtext
         }
     }
     return false
