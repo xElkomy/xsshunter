@@ -535,7 +535,7 @@ async function set_up_api_server(app) {
                 "referer": payload.referer,
                 "user_agent": payload.user_agent,
                 "cookies": payload.cookies,
-                "localstorage": JSON.parse(payload.localstorage),
+                "localstorage": payload.localstorage ? JSON.parse(payload.localstorage) : {},
                 "title": payload.title,
                 "payload_url": payload.payload_url,
                 "origin": payload.origin,
