@@ -538,6 +538,7 @@ async function set_up_api_server(app) {
                 "localstorage": payload.localstorage ? JSON.parse(payload.localstorage) : {},
                 "title": payload.title,
                 "payload_url": payload.payload_url,
+                "dom": payload.dom,
                 "origin": payload.origin,
                 "screenshot_id": payload.screenshot_id,
                 "was_iframe": payload.was_iframe,
