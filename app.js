@@ -32,6 +32,11 @@ function set_secure_headers(req, res) {
 		res.set("Content-Type", "application/json");
 		return
 	}
+	
+	// Allow resources for admin panel
+	if (req.path.startsWith('/app/')) {
+		res.set("Content-Security-Policy", "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; prefetch-src 'self'; manifest-src 'self'");
+	}
 }
 
 async function check_file_exists(file_path) {
