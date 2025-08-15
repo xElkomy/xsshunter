@@ -463,7 +463,8 @@ async function get_app_server() {
         res.set("Access-Control-Max-Age", "86400");
 
         if(req.get('host') != process.env.XSS_HOSTNAME) {
-            return res.redirect("/app/");
+            console.debug(`Host mismatch: ${req.get('host')} != ${process.env.XSS_HOSTNAME}`);
+            return res.redirect(`https://${process.env.HOSTNAME}/app/`);
         }
 
         if(req.originalUrl.includes(".map")) {
@@ -473,11 +474,25 @@ async function get_app_server() {
         let user, userPath;
 
         if(process.env.ALLOW_EMPTY_USERPATH && process.env.ALLOW_EMPTY_USERPATH.toLowerCase() === "true") {
-            user = await Users.findOne({ where: { 'email': process.env.PANEL_USERNAME.toLowerCase() } });
-            userPath = user.path;
+            try {
+                user = await Users.findOne({ where: { 'email': process.env.PANEL_USERNAME.toLowerCase() } });
+                if (user === null) {
+                    console.debug("No user found with email:", process.env.PANEL_USERNAME.toLowerCase());
+                    return res.send("Hey");
+                }
+                userPath = user.path;
+            } catch (error) {
+                console.error("Database error in payload handler:", error);
+                return res.status(500).send("Database error");
+            }
         } else {
             userPath = req.originalUrl.split("/").join("").split("?")[0];
-            user = await Users.findOne({ where: { 'path': userPath } });
+            try {
+                user = await Users.findOne({ where: { 'path': userPath } });
+            } catch (error) {
+                console.error("Database error in payload handler:", error);
+                return res.status(500).send("Database error");
+            }
         }
 
         if (user === null){
